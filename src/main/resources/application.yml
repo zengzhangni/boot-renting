@@ -1,0 +1,13 @@
+server:
+  port: 80
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql:///renting?characterEncoding=utf8&useSSL=false&useLocalSessionState=true
+    username: root
+    password: 123456
+  thymeleaf:
+    suffix: .html
+mybatis:
+  mapperLocations: classpath:mapper/*.xml
