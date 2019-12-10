@@ -16,4 +16,8 @@ public interface UserService extends IService<User> {
     User queryByLoginName(String loginName);
 
     User queryByPhone(String phone);
+
+    String sendCode(String phone);
+
+    Object login(User user);
 }

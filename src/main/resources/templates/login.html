@@ -1,79 +1,149 @@
-<html style="" class=" js no-touch svg inlinesvg svgclippaths no-ie8compat"><head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta http-equiv="Cache-Control" content="no-transform">
-    <meta http-equiv="Cache-Control" content="no-siteapp">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>仿钉钉网登录注册页面静态模板源码 - html代码库网站程序模板源码|jquery特效动画js插件源码</title>
-    <meta name="keywords" content="钉钉网,登录,注册,注册页面,注册静态,注册模板,注册源码,登录源码">
-    <meta name="description" content="这是一套仿钉钉网登录注册页面静态模板源。">
-    <meta name="author" content="代码库">
-    <meta name="Copyright" content="代码库">
-    <script src="http://www.dmaku.com/static/index/js/modernizr.js"></script>
-    <link rel="stylesheet" href="http://www.dmaku.com/static/index/css/dmaku.min.css" type="text/css" media="all">
-    <script type="text/javascript" src="http://www.dmaku.com/static/index/js/jquery.js"></script>
-</head>
-<body style="overflow-y:hidden;background: #434A54;">
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
+    <title>用户登录</title>
+    <link href="http://www.dmaku.com/demo/moban/2018062057985310/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://www.dmaku.com/demo/moban/2018062057985310/css/a3common.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://www.dmaku.com/demo/moban/2018062057985310/css/login.css">
+    <link rel="stylesheet" href="http://www.dmaku.com/demo/moban/2018062057985310/css/font_43459_lbtux0zjkr6yldi.css">
+    <link rel="stylesheet" href="http://www.dmaku.com/demo/moban/2018062057985310/css/register.css">
+    <script src="/js/vue.min.js"></script>
+    <script src="/js/axios.min.js"></script>
+    <script src="/js/element-ui.js"></script>
+    <link rel="stylesheet" href="/css/element-ui.css">
 
-<div class="preview-portrait-block" style="display: block; padding-top: 52px;">
-    <div class="preview-pc podmk">
-        <div class="preview-top">
-            <i></i>
-            <span></span>
-        </div>
-        <div class="preview-home"></div>
-        <div class="preview-view">
-            <iframe id="iframe" src="http://www.dmaku.com/demo/moban/2018062057985310" scrolling="yes" style="height: 249px;" frameborder="0"></iframe>
+</head>
+<body>
+<div id="main" class="main-warp">
+    <div class="main-content">
+        <div class="formDiv">
+
+            <h2 class="text-center">
+                <el-button style="font-size: 20px;margin-left: 20px" type="text" @click="typeSwitch(1)">我是租客</el-button>
+                <span class="split-space">|</span>
+                <el-button style="font-size: 20px;color: #1fc441" type="text" @click="typeSwitch(2)">我是房东</el-button>
+            </h2>
+            </h2>
+            <div v-if="type==1">
+                <div class="dataform">
+                    <div class="input-warp gap">
+                        <span class="input-icon iconfont icon-yonghu1"></span>
+                        <input v-model="user.phone" type="text" class="inputs" placeholder="手机号">
+                    </div>
+                    <div class="gap">
+                        <div class="input-warp s">
+                            <span class="input-icon iconfont icon-yanzhengma"></span>
+                            <input v-model="user.code" placeholder="验证码" type="text" class="inputs"/>
+                            <div style="display: none"></div>
+                        </div>
+                        <div class="pull-right">
+                            <button class="btn lgbtn blue" @click="sendCode()">获取验证码</button>
+                        </div>
+                    </div>
+                    <div class="btn-warp gap">
+                        <div class="text-center">
+                            <button @click="login()" class="btn btn-block lgbtn blue">登录</button>
+                        </div>
+                    </div>
+                    <div class="gap">
+
+                        <div class="pull-right" style="margin-top: 6px">
+                            <a href="register" class="link">新用户注册</a></div>
+
+                        <div class="pretty-box">
+                            <input type="checkbox" value="1" name="REMEMBER" id="remember" class="">
+                            <label for="remember" style="font-weight: normal">记住我</label>
+                        </div>
+                    </div>
+
+
+                    <div class="biggap third-party-title">
+                        <h5 class="text-center"><span>第三方账号登录</span></h5>
+                    </div>
+                    <div class="third-auth">
+
+                        <a title="用钉钉登录" class="dt" href="javascript:;"></a>
+                        <a title="用微信账户登录" class="wx" href="javascript:;"></a>
+                        <a title="用QQ账户登录" class="qq" href="javascript:;"></a>
+
+                    </div>
+
+                </div>
+            </div>
+            <div v-if="type==2">
+                hsajfhsdjhvsdh
+            </div>
+
         </div>
     </div>
 </div>
-
-
 <script>
-    var height = $(".demo-header").height();
-    $(".preview-portrait-block").css({"padding-top":height});
-    $(".preview-nav-list-block span").click(function(){
-        $(".preview-nav-list-block span").removeClass();
-        $(this).addClass('active');
-        if("moban"=="kaiyuan"){
-            $("iframe").attr('src',$(this).data('src'));
-        }else{
-            $("iframe").attr('src',"/demo/moban/2018062057985310/"+$(this).data('src'));
+    new Vue({
+        el: '#main',
+        data: {
+            type: 1,
+            user: {
+                phone: "",
+                code: ""
+            }
+        },
+        mounted() {
+        },
+        methods: {
+            typeSwitch(type) {
+                this.type = type;
+            },
+            sendCode() {
+                if (this.user.phone) {
+                    axios.get("/user/sendCode", {
+                        params: {
+                            phone: this.user.phone
+                        }
+                    }).then(res => {
+                        const {code, message, data} = res.data;
+                        if (code === 200) {
+                            this.user.code = data;
+                        } else {
+                            this.message(message, "error");
+                        }
+                        console.log(code);
+                        console.log(res.data);
+                    });
+                } else {
+                    this.message("请输入手机号");
+                }
+
+            },
+            login() {
+                axios.post("/user/login", {
+                    phone: this.user.phone
+                }).then(res => {
+                    const {code, message, data} = res.data;
+                    if (code === 200) {
+                        this.message(message, "success");
+                        window.location = "/log";
+                    } else {
+                        this.message(message, "error");
+                    }
+                    console.log(code);
+                    console.log(res.data);
+                });
+
+            },
+            //success warning info error
+            message(message, type) {
+                this.$message({
+                    message: message,
+                    type: type == null ? "info" : type
+
+                });
+            },
         }
-
     })
-    $(".posti").click(function(){
-
-        $(".posti").removeClass("arve");
-        $(this).addClass("arve");
-
-
-        if($(this).data('id')=="preview-pc"){
-            $("body").css({"overflow-y":"hidden"});
-            //$(".bakt_dem").removeClass().addClass("bakt_dem pc");
-//		var ik = $(".ik").removeClass("ip_p");
-            $("iframe").attr("id","iframe");
-            $("#iframe").height($(window).height()-height);
-            $(".preview-portrait-block").css({"padding-top":height});
-        }else{
-            $("body").css({"overflow-y":"inherit"});
-            $("iframe").attr("id","");$("iframe").attr("style","height:100%");
-            $(".preview-portrait-block").css({"padding-top":"120px"});
-//		tok.removeClass();
-//		tok.find("div").addClass("ip_p");
-//		$(".ik").find("iframe").attr("id","iframe_dem");
-//		tok.addClass("bakt_dem "+$(this).data('id'));
-        }
-        $(".podmk").removeClass().addClass($(this).data('id')+' podmk');
-    })
-    $("#iframe").height($(window).height()-height);
-    $(window).resize(function() {
-        $("#iframe").height($(window).height()-height);
-    });
-    function cols(){
-        location.href="/demo/moban/2018062057985310";
-    }
-    $("#ma").attr('src',"http://b.bshare.cn/barCode?site=weixin&url=http://www.dmaku.com/demo/moban/2018062057985310");
 </script>
-
-</body></html>
+</body>
+</html>

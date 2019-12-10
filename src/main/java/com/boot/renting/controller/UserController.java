@@ -55,4 +55,14 @@ public class UserController {
     public ResponseMessage<Boolean> removeById(@PathVariable("id") Integer id) {
         return new ResponseMessage<>(userService.removeById(id));
     }
+    @ApiOperation("发送验证码")
+    @GetMapping("sendCode")
+    public ResponseMessage<String> sendCode(@RequestParam("phone") String phone) {
+        return new ResponseMessage<>(userService.sendCode(phone));
+    }
+    @ApiOperation("login")
+    @PostMapping("login")
+    public ResponseMessage login(@RequestBody User user) {
+        return new ResponseMessage<>(userService.login(user));
+    }
 }
