@@ -1,10 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<html style="" class=" js no-touch svg inlinesvg svgclippaths no-ie8compat"><head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>仿钉钉网登录注册页面静态模板源码 - html代码库网站程序模板源码|jquery特效动画js插件源码</title>
+    <meta name="keywords" content="钉钉网,登录,注册,注册页面,注册静态,注册模板,注册源码,登录源码">
+    <meta name="description" content="这是一套仿钉钉网登录注册页面静态模板源。">
+    <meta name="author" content="代码库">
+    <meta name="Copyright" content="代码库">
+    <script src="http://www.dmaku.com/static/index/js/modernizr.js"></script>
+    <link rel="stylesheet" href="http://www.dmaku.com/static/index/css/dmaku.min.css" type="text/css" media="all">
+    <script type="text/javascript" src="http://www.dmaku.com/static/index/js/jquery.js"></script>
 </head>
-<body>
-登录
-</body>
-</html>
+<body style="overflow-y:hidden;background: #434A54;">
+
+<div class="preview-portrait-block" style="display: block; padding-top: 52px;">
+    <div class="preview-pc podmk">
+        <div class="preview-top">
+            <i></i>
+            <span></span>
+        </div>
+        <div class="preview-home"></div>
+        <div class="preview-view">
+            <iframe id="iframe" src="http://www.dmaku.com/demo/moban/2018062057985310" scrolling="yes" style="height: 249px;" frameborder="0"></iframe>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var height = $(".demo-header").height();
+    $(".preview-portrait-block").css({"padding-top":height});
+    $(".preview-nav-list-block span").click(function(){
+        $(".preview-nav-list-block span").removeClass();
+        $(this).addClass('active');
+        if("moban"=="kaiyuan"){
+            $("iframe").attr('src',$(this).data('src'));
+        }else{
+            $("iframe").attr('src',"/demo/moban/2018062057985310/"+$(this).data('src'));
+        }
+
+    })
+    $(".posti").click(function(){
+
+        $(".posti").removeClass("arve");
+        $(this).addClass("arve");
+
+
+        if($(this).data('id')=="preview-pc"){
+            $("body").css({"overflow-y":"hidden"});
+            //$(".bakt_dem").removeClass().addClass("bakt_dem pc");
+//		var ik = $(".ik").removeClass("ip_p");
+            $("iframe").attr("id","iframe");
+            $("#iframe").height($(window).height()-height);
+            $(".preview-portrait-block").css({"padding-top":height});
+        }else{
+            $("body").css({"overflow-y":"inherit"});
+            $("iframe").attr("id","");$("iframe").attr("style","height:100%");
+            $(".preview-portrait-block").css({"padding-top":"120px"});
+//		tok.removeClass();
+//		tok.find("div").addClass("ip_p");
+//		$(".ik").find("iframe").attr("id","iframe_dem");
+//		tok.addClass("bakt_dem "+$(this).data('id'));
+        }
+        $(".podmk").removeClass().addClass($(this).data('id')+' podmk');
+    })
+    $("#iframe").height($(window).height()-height);
+    $(window).resize(function() {
+        $("#iframe").height($(window).height()-height);
+    });
+    function cols(){
+        location.href="/demo/moban/2018062057985310";
+    }
+    $("#ma").attr('src',"http://b.bshare.cn/barCode?site=weixin&url=http://www.dmaku.com/demo/moban/2018062057985310");
+</script>
+
+</body></html>
