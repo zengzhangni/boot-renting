@@ -1,13 +1,22 @@
 package com.boot.renting.service.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.boot.renting.dto.SystemUserLoginDto;
+import com.boot.renting.dto.UserLoginDto;
+import com.boot.renting.dto.UserRegisterDto;
 import com.boot.renting.entity.User;
 import com.boot.renting.mapper.UserMapper;
 import com.boot.renting.query.UserListQuery;
 import com.boot.renting.service.UserService;
+import com.boot.renting.utils.CookieUtil;
+import com.boot.renting.utils.HttpContextUtils;
 import com.boot.renting.utils.create.NoUtil;
+import com.boot.renting.utils.exception.BaseException;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
@@ -16,6 +25,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
@@ -46,18 +56,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public User queryByPhone(String phone) {
+    public User queryByPhone(String phone, Integer type) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("phone", phone);
+        wrapper.eq("type", type);
         return userMapper.selectOne(wrapper);
     }
 
     @Override
-    public String sendCode(String phone) {
-//        User user = queryByPhone(phone);
-//        if (user == null) {
-//            throw new BaseException("账号不存在");
-//        }
+    public String loginSendCode(String phone, Integer type) {
+        User user = queryByPhone(phone, type);
+        if (user == null) {
+            throw new BaseException("账号不存在");
+        }
 
         String code = NoUtil.getRandom(4);
         redis.put(phone, code);
@@ -65,10 +76,61 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Object login(User user) {
-        String redisCode = redis.get(user.getPhone());
+    public String registerSendCode(String phone, Integer type) {
+        User user = queryByPhone(phone, type);
+        if (user != null) {
+            throw new BaseException("账号已存在");
+        }
+        String code = NoUtil.getRandom(4);
+        redis.put(phone, code);
+        return code;
+    }
 
-        return "OK";
+    @Override
+    public String login(UserLoginDto dto) {
+        codeYz(dto.getPhone(), dto.getCode());
+        if (dto.getType() == 1) {
+            return "/user/userIndex";
+        } else if (dto.getType() == 2) {
+            return "/landlord/landlordIndex";
+        }
+        return "/login";
+    }
+
+    @Override
+    public String register(UserRegisterDto dto) {
+        codeYz(dto.getPhone(), dto.getCode());
+        User dbUser = queryByPhone(dto.getPhone(), dto.getType());
+        if (dbUser != null) {
+            throw new BaseException("账号已存在");
+        }
+        User user = new User();
+        user.setName(dto.getName());
+        user.setUserCode(NoUtil.getUserCode());
+        user.setPhone(dto.getPhone());
+        user.setType(dto.getType());
+        userMapper.insert(user);
+        return "/login";
+    }
+
+    @Override
+    public String systemUserLogin(SystemUserLoginDto loginDto) {
+        User user = queryByLoginName(loginDto.getLoginName());
+        if (user == null) {
+            throw new BaseException("账号不存在");
+        }
+        if (!Objects.equals(user.getLoginPassword(), loginDto.getLoginPassword())) {
+            throw new BaseException("密码错误");
+        }
+        CookieUtil.set(HttpContextUtils.getHttpServletResponse(), "systemUserName", user.getLoginName(), true);
+        return "/admin/index";
+    }
+
+    private void codeYz(String phone, String code) {
+        String redisCode = redis.get(phone);
+        if (redisCode == null || !Objects.equals(redisCode, code)) {
+            throw new BaseException("验证码过期或验证码错误");
+        }
     }
 
 }

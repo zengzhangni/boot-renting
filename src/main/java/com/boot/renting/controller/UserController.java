@@ -1,6 +1,8 @@
 package com.boot.renting.controller;
 
 
+import com.boot.renting.dto.UserLoginDto;
+import com.boot.renting.dto.UserRegisterDto;
 import com.boot.renting.entity.User;
 import com.boot.renting.query.UserListQuery;
 import com.boot.renting.service.UserService;
@@ -55,14 +57,28 @@ public class UserController {
     public ResponseMessage<Boolean> removeById(@PathVariable("id") Integer id) {
         return new ResponseMessage<>(userService.removeById(id));
     }
-    @ApiOperation("发送验证码")
-    @GetMapping("sendCode")
-    public ResponseMessage<String> sendCode(@RequestParam("phone") String phone) {
-        return new ResponseMessage<>(userService.sendCode(phone));
+
+    @ApiOperation("登录发送验证码")
+    @GetMapping("loginSendCode")
+    public ResponseMessage<String> loginSendCode(@RequestParam("phone") String phone, @RequestParam("type") Integer type) {
+        return new ResponseMessage<>(userService.loginSendCode(phone, type));
     }
-    @ApiOperation("login")
+
+    @ApiOperation("注册发送验证码")
+    @GetMapping("registerSendCode")
+    public ResponseMessage<String> registerSendCode(@RequestParam("phone") String phone, @RequestParam("type") Integer type) {
+        return new ResponseMessage<>(userService.registerSendCode(phone, type));
+    }
+
+    @ApiOperation("登录")
     @PostMapping("login")
-    public ResponseMessage login(@RequestBody User user) {
-        return new ResponseMessage<>(userService.login(user));
+    public ResponseMessage<String> login(@RequestBody UserLoginDto loginDto) {
+        return new ResponseMessage<>(userService.login(loginDto));
+    }
+
+    @ApiOperation("注册")
+    @PostMapping("register")
+    public ResponseMessage<String> register(@RequestBody UserRegisterDto dto) {
+        return new ResponseMessage<>(userService.register(dto));
     }
 }

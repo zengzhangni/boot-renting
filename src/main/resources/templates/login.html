@@ -17,67 +17,62 @@
     <link rel="stylesheet" href="/css/element-ui.css">
 
 </head>
+
+
 <body>
 <div id="main" class="main-warp">
     <div class="main-content">
         <div class="formDiv">
 
             <h2 class="text-center">
-                <el-button style="font-size: 20px;margin-left: 20px" type="text" @click="typeSwitch(1)">我是租客</el-button>
-                <span class="split-space">|</span>
-                <el-button style="font-size: 20px;color: #1fc441" type="text" @click="typeSwitch(2)">我是房东</el-button>
+                <el-button :style="style1" type="text" @click="typeSwitch(1)">我是租客</el-button>
+                <span class="split-space" style="color: #0a0810;">|</span>
+                <el-button :style="style2" type="text" @click="typeSwitch(2)">我是房东</el-button>
             </h2>
-            </h2>
-            <div v-if="type==1">
-                <div class="dataform">
-                    <div class="input-warp gap">
-                        <span class="input-icon iconfont icon-yonghu1"></span>
-                        <input v-model="user.phone" type="text" class="inputs" placeholder="手机号">
+            <div class="dataform">
+                <div class="input-warp gap">
+                    <span class="input-icon iconfont icon-yonghu1"></span>
+                    <input v-model="user.phone" type="text" class="inputs" placeholder="手机号" maxlength="11">
+                </div>
+                <div class="gap">
+                    <div class="input-warp s">
+                        <span class="input-icon iconfont icon-yanzhengma"></span>
+                        <input v-model="user.code" placeholder="验证码" type="text" class="inputs"/>
+                        <div style="display: none"></div>
                     </div>
-                    <div class="gap">
-                        <div class="input-warp s">
-                            <span class="input-icon iconfont icon-yanzhengma"></span>
-                            <input v-model="user.code" placeholder="验证码" type="text" class="inputs"/>
-                            <div style="display: none"></div>
-                        </div>
-                        <div class="pull-right">
-                            <button class="btn lgbtn blue" @click="sendCode()">获取验证码</button>
-                        </div>
+                    <div class="pull-right">
+                        <button class="btn lgbtn blue" @click="sendCode()">获取验证码</button>
                     </div>
-                    <div class="btn-warp gap">
-                        <div class="text-center">
-                            <button @click="login()" class="btn btn-block lgbtn blue">登录</button>
-                        </div>
+                </div>
+                <div class="btn-warp gap">
+                    <div class="text-center">
+                        <button @click="login()" class="btn btn-block lgbtn blue">登录</button>
                     </div>
-                    <div class="gap">
+                </div>
+                <div class="gap">
 
-                        <div class="pull-right" style="margin-top: 6px">
-                            <a href="register" class="link">新用户注册</a></div>
+                    <div class="pull-right" style="margin-top: 6px">
+                        <a href="register" class="link">新用户注册</a></div>
 
-                        <div class="pretty-box">
-                            <input type="checkbox" value="1" name="REMEMBER" id="remember" class="">
-                            <label for="remember" style="font-weight: normal">记住我</label>
-                        </div>
+                    <div class="pretty-box">
+                        <input type="checkbox" value="1" name="REMEMBER" id="remember" class="">
+                        <label for="remember" style="font-weight: normal">记住我</label>
                     </div>
+                </div>
 
 
-                    <div class="biggap third-party-title">
-                        <h5 class="text-center"><span>第三方账号登录</span></h5>
-                    </div>
-                    <div class="third-auth">
+                <div class="biggap third-party-title">
+                    <h5 class="text-center"><span>第三方账号登录</span></h5>
+                </div>
+                <div class="third-auth">
 
-                        <a title="用钉钉登录" class="dt" href="javascript:;"></a>
-                        <a title="用微信账户登录" class="wx" href="javascript:;"></a>
-                        <a title="用QQ账户登录" class="qq" href="javascript:;"></a>
-
-                    </div>
+                    <a title="用钉钉登录" class="dt" href="javascript:;"></a>
+                    <a title="用微信账户登录" class="wx" href="javascript:;"></a>
+                    <a title="用QQ账户登录" class="qq" href="javascript:;"></a>
 
                 </div>
-            </div>
-            <div v-if="type==2">
-                hsajfhsdjhvsdh
-            </div>
 
+            </div>
         </div>
     </div>
 </div>
@@ -85,6 +80,8 @@
     new Vue({
         el: '#main',
         data: {
+            style1: "font-size: 25px;color: #289BFF",
+            style2: "font-size: 25px;color: #0a0810",
             type: 1,
             user: {
                 phone: "",
@@ -95,13 +92,22 @@
         },
         methods: {
             typeSwitch(type) {
+                if (type === 1) {
+                    this.style1 = "font-size: 25px;color: #289BFF";
+                    this.style2 = "font-size: 25px;color: #0a0810";
+                } else {
+                    this.style2 = "font-size: 25px;color: #289BFF";
+                    this.style1 = "font-size: 25px;color: #0a0810";
+                }
+                this.user = {};
                 this.type = type;
             },
             sendCode() {
                 if (this.user.phone) {
-                    axios.get("/user/sendCode", {
+                    axios.get("/user/loginSendCode", {
                         params: {
-                            phone: this.user.phone
+                            phone: this.user.phone,
+                            type: this.type
                         }
                     }).then(res => {
                         const {code, message, data} = res.data;
@@ -120,12 +126,15 @@
             },
             login() {
                 axios.post("/user/login", {
-                    phone: this.user.phone
+                    phone: this.user.phone,
+                    code: this.user.code,
+                    type: this.type
+
                 }).then(res => {
                     const {code, message, data} = res.data;
                     if (code === 200) {
                         this.message(message, "success");
-                        window.location = "/log";
+                        window.location = data;
                     } else {
                         this.message(message, "error");
                     }
@@ -145,5 +154,7 @@
         }
     })
 </script>
+<style type="text/css">
+</style>
 </body>
 </html>

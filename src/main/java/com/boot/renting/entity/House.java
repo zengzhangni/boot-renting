@@ -28,6 +28,8 @@ public class House implements Serializable {
     private String houseImg;
     @ApiModelProperty("房子地址")
     private String houseAddress;
+    @ApiModelProperty("金额")
+    private Integer price;
     @ApiModelProperty("备注")
     private String remark;
 }

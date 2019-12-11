@@ -23,9 +23,59 @@ public class HtmlController {
         return "register";
     }
 
+    @GetMapping("/landlord/landlordIndex")
+    public String landlordIndex() {
+        return "landlord/landlordIndex";
+    }
+
+    @GetMapping("/user/userIndex")
+    public String userIndex() {
+        return "user/userIndex";
+    }
+
+
+    /*--------------------------admin------------------------------*/
+
+    @GetMapping("/admin/index")
+    public String adminIndex() {
+        return "admin/index";
+    }
+
+    @GetMapping("/admin/login")
+    public String adminLogin() {
+        return "admin/login";
+    }
+
+    @GetMapping("/admin/adminList")
+    public String adminList() {
+        return "admin/adminList";
+    }
+
+    @GetMapping("/admin/userList")
+    public String userList() {
+        return "admin/userList";
+    }
+
+    @GetMapping("/admin/landlordList")
+    public String landlordList() {
+        return "admin/landlordList";
+    }
+
+
     @GetMapping("/cs")
     public String cs() {
         return "cs";
     }
 
+
+//
+//    @GetMapping("/{html}")
+//    public String html(@PathVariable("html") String html) {
+//        return html;
+//    }
+//
+//    @GetMapping("/{root}/{html}")
+//    public String rootHtm(@PathVariable("root") String root, @PathVariable("html") String html) {
+//        return root + "/" + html;
+//    }
 }

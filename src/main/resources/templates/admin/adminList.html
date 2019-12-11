@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员列表</title>
+    <script src="/js/vue.min.js"></script>
+    <script src="/js/axios.min.js"></script>
+    <script src="/js/element-ui.js"></script>
+    <link rel="stylesheet" href="/css/element-ui.css">
+</head>
+<body>
+<div id="log">
+    <div style="margin: 20px; float: right">
+        <el-button type="primary" icon="el-icon-edit" @click="add">新增</el-button>
+    </div>
+
+    <el-table :data="adminListData"
+              highlight-current-row
+              border
+              max-height="650"
+    >
+        <el-table-column prop="id" label="id" align="center" show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column prop="userCode" label="编号" align="center" show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column prop="name" label="姓名" align="center" show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column prop="loginName" label="账号" align="center">
+        </el-table-column>
+        <el-table-column prop="loginPassword" label="密码" align="center" show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column prop="sex" label="性别" align="center" :formatter="sexFormat">
+        </el-table-column>
+        <el-table-column align="center" label="操作">
+            <template slot-scope="scope">
+                <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
+                <el-button type="text" size="small" @click="deleteById(scope.row.id)">删除</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+    <div class="block" style="float: right;padding: 30px">
+        <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :page-sizes="[10, 20, 30, 40]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total">
+        </el-pagination>
+    </div>
+
+    <el-dialog
+            title="删除"
+            :visible.sync="isDelete"
+            width="20%"
+    >
+        <span style="color: #ff100a;">你确定要删除id为:{{deleteId}} 的这条数据吗?</span>
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="isDelete = false">取 消</el-button>
+    <el-button type="primary" @click="confirmDeleteById">确 定</el-button>
+  </span>
+    </el-dialog>
+</div>
+</body>
+<script>
+    new Vue({
+        el: '#log',
+        data: {
+            adminListData: [],
+            pageNo: 1,
+            pageSize: 10,
+            total: 0,
+            deleteId: null,
+            isDelete: false,
+            loginName: null
+        },
+        mounted() {
+            this.http(this.pageNo, this.pageSize);
+        },
+        methods: {
+            http(pageNo, pageSize) {
+                axios.post("/systemUser/systemUserPageList", {
+                    pageNo: pageNo,
+                    pageSize: pageSize
+                }).then(res => {
+                    const {records, total} = res.data.data;
+                    this.adminListData = records;
+                    this.total = total;
+                });
+            },
+            //点击选中
+            tableRowClassName({row, rowIndex}) {
+                //把每一行的索引放进row
+                row.index = rowIndex;
+            },
+            //分页条
+            handleSizeChange(size) {
+                this.pageSize = size;
+                this.http(this.pageNo, size);
+            },
+            //页码改变
+            handleCurrentChange(currentPage) {
+                this.pageNo = currentPage;
+                this.http(currentPage, this.pageSize);
+            },
+            add() {
+                console.log(11)
+            },
+            edit(user) {
+                console.log(user)
+            },
+            deleteById(id) {
+                this.deleteId = id;
+                this.isDelete = true;
+            },
+            confirmDeleteById() {
+                axios.get("/systemUser/removeById/" + this.deleteId).then(res => {
+                    const {code, message} = res.data;
+                    if (code === 200) {
+                        this.message(message, "success");
+                        this.isDelete = false;
+                        this.http(this.pageNo, this.pageSize);
+                    } else {
+                        this.message(message, "error");
+                    }
+
+                });
+            },
+            sexFormat(row, column, cellValue) {
+                return cellValue === 0 ? "女" : "男";
+            },
+            //success warning info error
+            message(message, type) {
+                this.$message({
+                    message: message,
+                    type: type == null ? "info" : type
+
+                });
+            }
+        }
+    })
+</script>
+<style>
+    .el-table__body tr.current-row td {
+        background-color: #d8c485;
+    }
+
+    .el-table--enable-row-hover .el-table__body tr:hover td {
+        background-color: #d8c485;
+    }
+
+</style>
+</html>

@@ -14,6 +14,14 @@ public class NoUtil {
     }
 
     /**
+     * 获取用户code
+     */
+    public static String getUserCode() {
+        String file = "USER" + DateUtil.format(new Date(), DatePattern.PURE_DATETIME_PATTERN);
+        return CreateNo.getInstance().GenerateNo(file, 5);
+    }
+
+    /**
      * 获取随机数
      */
     public static String getRandom(Integer num) {
