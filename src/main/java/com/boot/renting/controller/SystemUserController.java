@@ -36,16 +36,24 @@ public class SystemUserController {
 
     @ApiOperation("cs")
     @GetMapping("cs")
-    public ResponseMessage cs(Integer num) {
+    public ResponseMessage cs(Integer num, Integer type) {
         List<User> list = new ArrayList<>();
         for (int i = 0; i < num; i++) {
             User user = new User();
-            user.setName("管理员" + NoUtil.getRandom(7));
             user.setUserCode(NoUtil.getUserCode());
-            user.setLoginName("admin" + NoUtil.getRandom(5));
-            user.setLoginPassword(NoUtil.getRandom(8));
+            if (type == 0) {
+                user.setName("管理员" + NoUtil.getRandom(7));
+                user.setLoginName("admin" + NoUtil.getRandom(5));
+                user.setLoginPassword(NoUtil.getRandom(8));
+            } else if (type == 1) {
+                user.setName("租客" + NoUtil.getRandom(7));
+                user.setPhone(NoUtil.getRandom(11));
+            } else if (type == 2) {
+                user.setName("房东" + NoUtil.getRandom(7));
+                user.setPhone(NoUtil.getRandom(11));
+            }
             user.setSex(new Random().nextInt(2));
-            user.setType(0);
+            user.setType(type);
             list.add(user);
         }
         return new ResponseMessage<>(userService.saveBatch(list));
@@ -63,7 +71,8 @@ public class SystemUserController {
     public ResponseMessage<IPage<User>> systemUserPageList(@RequestBody UserListQuery query) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("type", 0);
-        IPage<User> page = new Page<>(query.getPageNo(), query.getPageSize());
+        Page<User> page = new Page<>(query.getPageNo(), query.getPageSize());
+        page.setDesc("id");
         return new ResponseMessage<>(userService.page(page, wrapper));
     }
 
@@ -74,6 +83,8 @@ public class SystemUserController {
         if (user1 != null) {
             throw new BaseException("账号已存在");
         }
+        user.setUserCode(NoUtil.getUserCode());
+        user.setType(0);
         return new ResponseMessage<>(userService.save(user));
     }
 

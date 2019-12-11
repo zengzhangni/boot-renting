@@ -1,6 +1,9 @@
 package com.boot.renting.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.renting.dto.UserLoginDto;
 import com.boot.renting.dto.UserRegisterDto;
 import com.boot.renting.entity.User;
@@ -8,7 +11,6 @@ import com.boot.renting.query.UserListQuery;
 import com.boot.renting.service.UserService;
 import com.boot.renting.utils.ResponseMessage;
 import com.boot.renting.utils.exception.BaseException;
-import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +33,13 @@ public class UserController {
     }
 
     @ApiOperation("分页列表")
-    @PostMapping("userList")
-    public ResponseMessage<PageInfo<User>> userList(@RequestBody UserListQuery query) {
-        return new ResponseMessage<>(userService.userList(query));
+    @PostMapping("userPageList")
+    public ResponseMessage<IPage<User>> userPageList(@RequestBody UserListQuery query) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("type", query.getType());
+        Page<User> page = new Page<>(query.getPageNo(), query.getPageSize());
+        page.setDesc("id");
+        return new ResponseMessage<>(userService.page(page, wrapper));
     }
 
     @ApiOperation("保存")

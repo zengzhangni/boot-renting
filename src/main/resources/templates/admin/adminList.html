@@ -9,9 +9,10 @@
     <link rel="stylesheet" href="/css/element-ui.css">
 </head>
 <body>
-<div id="log">
+<div id="adminList">
     <div style="margin: 20px; float: right">
-        <el-button type="primary" icon="el-icon-edit" @click="add">新增</el-button>
+        <el-button type="primary" icon="el-icon-edit" @click="addDialog = true,systemUser={}">新增</el-button>
+        <el-button type="primary" icon="el-icon-refresh" @click="handleCurrentChange(1)">刷新</el-button>
     </div>
 
     <el-table :data="adminListData"
@@ -19,7 +20,10 @@
               border
               max-height="650"
     >
-        <el-table-column prop="id" label="id" align="center" show-overflow-tooltip>
+        <el-table-column type="index" label="序号" align="center" width="80px">
+            <template slot-scope="scope">
+                <span>{{(pageNo - 1) * pageSize + scope.$index + 1}}</span>
+            </template>
         </el-table-column>
         <el-table-column prop="userCode" label="编号" align="center" show-overflow-tooltip>
         </el-table-column>
@@ -52,19 +56,71 @@
     <el-dialog
             title="删除"
             :visible.sync="isDelete"
-            width="20%"
+            width="30%"
     >
-        <span style="color: #ff100a;">你确定要删除id为:{{deleteId}} 的这条数据吗?</span>
+        <span style="color: #ff100a;">你确定要删除这条数据吗?</span>
         <span slot="footer" class="dialog-footer">
     <el-button @click="isDelete = false">取 消</el-button>
     <el-button type="primary" @click="confirmDeleteById">确 定</el-button>
   </span>
     </el-dialog>
+
+
+    <el-dialog title="新增" :visible.sync="addDialog" width="450px">
+        <div style="margin-bottom: 20px;">
+            姓名:
+            <el-input v-model="systemUser.name" placeholder="姓名" style="width:300px"></el-input>
+        </div>
+        <div style="margin-bottom: 20px">
+            账号:
+            <el-input v-model="systemUser.loginName" placeholder="账号" style="width:300px"></el-input>
+        </div>
+        <div style="margin-bottom: 20px">
+            密码:
+            <el-input v-model="systemUser.loginPassword" placeholder="密码" style="width:300px"></el-input>
+        </div>
+        <div style="margin-bottom: 20px">
+            性别:
+            <el-select v-model="systemUser.sex" placeholder="性别" style="width:300px">
+                <el-option label="男" value="1"></el-option>
+                <el-option label="女" value="0"></el-option>
+            </el-select>
+        </div>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="addDialog = false">取 消</el-button>
+            <el-button type="primary" @click="add">保存</el-button>
+        </div>
+    </el-dialog>
+    <el-dialog title="编辑" :visible.sync="editDialog" width="450px">
+        <div style="margin-bottom: 20px;">
+            姓名:
+            <el-input v-model="systemUser.name" placeholder="姓名" style="width:300px"></el-input>
+        </div>
+        <div style="margin-bottom: 20px">
+            账号:
+            <el-input v-model="systemUser.loginName" placeholder="账号" style="width:300px"></el-input>
+        </div>
+        <div style="margin-bottom: 20px">
+            密码:
+            <el-input v-model="systemUser.loginPassword" placeholder="密码" style="width:300px"></el-input>
+        </div>
+        <div style="margin-bottom: 20px">
+            性别:
+            <el-select v-model="systemUser.sex" placeholder="性别" style="width:300px">
+                <el-option label="男" value=1></el-option>
+                <el-option label="女" value=0></el-option>
+            </el-select>
+        </div>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="editDialog = false">取 消</el-button>
+            <el-button type="primary" @click="confirmEdit">修改</el-button>
+        </div>
+    </el-dialog>
 </div>
 </body>
 <script>
     new Vue({
-        el: '#log',
+        el: '#adminList',
         data: {
             adminListData: [],
             pageNo: 1,
@@ -72,7 +128,16 @@
             total: 0,
             deleteId: null,
             isDelete: false,
-            loginName: null
+            loginName: null,
+            addDialog: false,
+            editDialog: false,
+            systemUser: {
+                id: null,
+                name: "",
+                loginName: "",
+                loginPassword: "",
+                sex: null
+            }
         },
         mounted() {
             this.http(this.pageNo, this.pageSize);
@@ -88,11 +153,6 @@
                     this.total = total;
                 });
             },
-            //点击选中
-            tableRowClassName({row, rowIndex}) {
-                //把每一行的索引放进row
-                row.index = rowIndex;
-            },
             //分页条
             handleSizeChange(size) {
                 this.pageSize = size;
@@ -104,10 +164,20 @@
                 this.http(currentPage, this.pageSize);
             },
             add() {
-                console.log(11)
+                axios.post("/systemUser/save", this.systemUser).then(res => {
+                    const {code, message} = res.data;
+                    if (code === 200) {
+                        this.message(message, "success");
+                        this.addDialog = false
+                        this.http(1, 10);
+                    } else {
+                        this.message(message, "error");
+                    }
+                });
             },
             edit(user) {
-                console.log(user)
+                this.systemUser = user;
+                this.editDialog = true;
             },
             deleteById(id) {
                 this.deleteId = id;
@@ -119,6 +189,19 @@
                     if (code === 200) {
                         this.message(message, "success");
                         this.isDelete = false;
+                        this.http(this.pageNo, this.pageSize);
+                    } else {
+                        this.message(message, "error");
+                    }
+
+                });
+            },
+            confirmEdit() {
+                axios.post("/systemUser/updateById", this.systemUser).then(res => {
+                    const {code, message} = res.data;
+                    if (code === 200) {
+                        this.message(message, "success");
+                        this.editDialog = false;
                         this.http(this.pageNo, this.pageSize);
                     } else {
                         this.message(message, "error");
