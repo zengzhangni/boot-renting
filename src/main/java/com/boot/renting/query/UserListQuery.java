@@ -10,4 +10,6 @@ import lombok.Data;
 public class UserListQuery extends Query {
 
     private Integer type;
+    private String userCode;
+    private String key;
 }

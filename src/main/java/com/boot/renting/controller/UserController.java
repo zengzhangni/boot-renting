@@ -9,6 +9,8 @@ import com.boot.renting.dto.UserRegisterDto;
 import com.boot.renting.entity.User;
 import com.boot.renting.query.UserListQuery;
 import com.boot.renting.service.UserService;
+import com.boot.renting.utils.CookieUtil;
+import com.boot.renting.utils.HttpContextUtils;
 import com.boot.renting.utils.ResponseMessage;
 import com.boot.renting.utils.create.NoUtil;
 import com.boot.renting.utils.exception.BaseException;
@@ -97,5 +99,12 @@ public class UserController {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("type", type);
         return new ResponseMessage<>(userService.list(wrapper));
+    }
+
+    @ApiOperation("获取用户信息")
+    @GetMapping("getInfo/{type}")
+    public ResponseMessage<User> getInfo(@PathVariable("type") Integer type) {
+        String phone = CookieUtil.getValue(HttpContextUtils.getHttpServletRequest(), "userPhone");
+        return new ResponseMessage<>(userService.queryByPhone(phone, type));
     }
 }

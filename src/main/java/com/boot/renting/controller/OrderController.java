@@ -1,6 +1,7 @@
 package com.boot.renting.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.renting.entity.Order;
@@ -28,7 +29,11 @@ public class OrderController {
     public ResponseMessage<IPage<Order>> orderPageList(@RequestBody UserListQuery query) {
         Page<Order> page = new Page<>(query.getPageNo(), query.getPageSize());
         page.setDesc("id");
-        return new ResponseMessage<>(orderService.page(page));
+        QueryWrapper<Order> wrapper = new QueryWrapper<>();
+        if (query.getUserCode() != null) {
+            wrapper.eq("user_code", query.getUserCode());
+        }
+        return new ResponseMessage<>(orderService.page(page, wrapper));
     }
 
     @ApiOperation("保存")
@@ -49,6 +54,7 @@ public class OrderController {
     public ResponseMessage<Boolean> removeById(@PathVariable("id") Integer id) {
         return new ResponseMessage<>(orderService.removeById(id));
     }
+
     @ApiOperation("获取订单详情")
     @GetMapping("getInfoById/{id}")
     public ResponseMessage<OrderInfoVo> getInfoById(@PathVariable("id") Integer id) {

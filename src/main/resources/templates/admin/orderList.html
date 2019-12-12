@@ -28,7 +28,7 @@
         </el-table-column>
         <el-table-column prop="userCode" label="用户编码" align="center" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column prop="houseCode" label="房子编码" align="center">
+        <el-table-column prop="houseCode" label="房子编码" align="center" show-overflow-tooltip>
         </el-table-column>
         <el-table-column prop="price" label="交易金额" align="center" :formatter="priceFormat">
         </el-table-column>
@@ -185,7 +185,7 @@
                     return cellValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                 }
                 return 0;
-            },
+            }
         }
     })
 </script>

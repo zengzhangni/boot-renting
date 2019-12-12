@@ -7,6 +7,7 @@ import com.boot.renting.entity.Trace;
 import com.boot.renting.query.UserListQuery;
 import com.boot.renting.service.TraceService;
 import com.boot.renting.utils.ResponseMessage;
+import com.boot.renting.vo.TraceInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -21,11 +22,9 @@ public class TraceController {
     private TraceService traceService;
 
     @ApiOperation("分页列表")
-    @PostMapping("orderPageList")
-    public ResponseMessage<IPage<Trace>> orderPageList(@RequestBody UserListQuery query) {
-        Page<Trace> page = new Page<>(query.getPageNo(), query.getPageSize());
-        page.setDesc("id");
-        return new ResponseMessage<>(traceService.page(page));
+    @PostMapping("tracePageList")
+    public ResponseMessage<IPage<TraceInfoVo>> tracePageList(@RequestBody UserListQuery query) {
+        return new ResponseMessage<>(traceService.tracePageList(query));
     }
 
     @ApiOperation("保存")

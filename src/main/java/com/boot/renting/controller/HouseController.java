@@ -12,6 +12,7 @@ import com.boot.renting.utils.create.NoUtil;
 import com.boot.renting.vo.HouseInfoVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -34,9 +35,13 @@ public class HouseController {
 
     @ApiOperation("列表")
     @PostMapping("houseList")
-    public ResponseMessage<List<House>> houseList() {
+    public ResponseMessage<List<House>> houseList(@RequestBody UserListQuery query) {
         QueryWrapper<House> wrapper = new QueryWrapper<>();
         wrapper.orderByDesc("id");
+
+        if (StringUtils.isNoneBlank(query.getKey())) {
+            wrapper.like("subject", query.getKey());
+        }
         return new ResponseMessage<>(houseService.list(wrapper));
     }
 

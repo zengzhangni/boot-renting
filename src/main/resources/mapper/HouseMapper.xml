@@ -5,6 +5,7 @@
 
     <select id="getInfoById" resultType="com.boot.renting.vo.HouseInfoVo">
        SELECT
+       		h.house_code houseCode,
 			u.name,
 			u.phone,
 			h.subject,

@@ -90,6 +90,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public String login(UserLoginDto dto) {
         codeYz(dto.getPhone(), dto.getCode());
         if (dto.getType() == 1) {
+            CookieUtil.set(HttpContextUtils.getHttpServletResponse(), "userPhone", dto.getPhone(), true);
             return "/user/userIndex";
         } else if (dto.getType() == 2) {
             return "/landlord/landlordIndex";

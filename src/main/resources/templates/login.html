@@ -101,7 +101,10 @@
                     this.style2 = "font-size: 25px;color: #289BFF";
                     this.style1 = "font-size: 25px;color: #0a0810";
                 }
-                this.user = {};
+                this.user = {
+                    phone: "",
+                    code: ""
+                };
                 this.type = type;
             },
             sendCode() {
@@ -118,8 +121,6 @@
                         } else {
                             this.message(message, "error");
                         }
-                        console.log(code);
-                        console.log(res.data);
                     });
                 } else {
                     this.message("请输入手机号");
@@ -140,8 +141,6 @@
                     } else {
                         this.message(message, "error");
                     }
-                    console.log(code);
-                    console.log(res.data);
                 });
 
             },
