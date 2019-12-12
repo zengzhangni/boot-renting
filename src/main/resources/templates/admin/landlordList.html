@@ -11,7 +11,7 @@
 <body>
 <div id="landlordList">
     <div style="margin: 20px; float: right">
-        <el-button type="primary" icon="el-icon-edit" @click="addDialog = true,systemUser={}">新增</el-button>
+        <el-button type="primary" icon="el-icon-edit" @click="addDialog = true,user={}">新增</el-button>
         <el-button type="primary" icon="el-icon-refresh" @click="handleCurrentChange(1)">刷新</el-button>
     </div>
 
@@ -25,7 +25,7 @@
                 <span>{{(pageNo - 1) * pageSize + scope.$index + 1}}</span>
             </template>
         </el-table-column>
-        <el-table-column prop="userCode" label="编号" align="center" show-overflow-tooltip>
+        <el-table-column prop="userCode" label="编号" align="center" width="230px">
         </el-table-column>
         <el-table-column prop="name" label="姓名" align="center" show-overflow-tooltip>
         </el-table-column>
@@ -69,19 +69,15 @@
     <el-dialog title="新增" :visible.sync="addDialog" width="450px">
         <div style="margin-bottom: 20px;">
             姓名:
-            <el-input v-model="systemUser.name" placeholder="姓名" style="width:300px"></el-input>
+            <el-input v-model="user.name" placeholder="姓名" style="width:300px"></el-input>
         </div>
         <div style="margin-bottom: 20px">
-            账号:
-            <el-input v-model="systemUser.loginName" placeholder="账号" style="width:300px"></el-input>
-        </div>
-        <div style="margin-bottom: 20px">
-            密码:
-            <el-input v-model="systemUser.loginPassword" placeholder="密码" style="width:300px"></el-input>
+            手机号:
+            <el-input v-model="user.phone" placeholder="手机号" style="width:300px" maxlength="11"></el-input>
         </div>
         <div style="margin-bottom: 20px">
             性别:
-            <el-select v-model="systemUser.sex" placeholder="性别" style="width:300px">
+            <el-select v-model="user.sex" placeholder="性别" style="width:300px">
                 <el-option label="男" value="1"></el-option>
                 <el-option label="女" value="0"></el-option>
             </el-select>
@@ -94,19 +90,11 @@
     <el-dialog title="编辑" :visible.sync="editDialog" width="450px">
         <div style="margin-bottom: 20px;">
             姓名:
-            <el-input v-model="systemUser.name" placeholder="姓名" style="width:300px"></el-input>
-        </div>
-        <div style="margin-bottom: 20px">
-            账号:
-            <el-input v-model="systemUser.loginName" placeholder="账号" style="width:300px"></el-input>
-        </div>
-        <div style="margin-bottom: 20px">
-            密码:
-            <el-input v-model="systemUser.loginPassword" placeholder="密码" style="width:300px"></el-input>
+            <el-input v-model="user.name" placeholder="姓名" style="width:300px"></el-input>
         </div>
         <div style="margin-bottom: 20px">
             性别:
-            <el-select v-model="systemUser.sex" placeholder="性别" style="width:300px">
+            <el-select v-model="user.sex" placeholder="性别" style="width:300px">
                 <el-option label="男" value=1></el-option>
                 <el-option label="女" value=0></el-option>
             </el-select>
@@ -128,15 +116,14 @@
             total: 0,
             deleteId: null,
             isDelete: false,
-            loginName: null,
             addDialog: false,
             editDialog: false,
-            systemUser: {
+            user: {
                 id: null,
                 name: "",
-                loginName: "",
-                loginPassword: "",
-                sex: null
+                phone: "",
+                sex: null,
+                type: null
             }
         },
         mounted() {
@@ -147,7 +134,7 @@
                 axios.post("/user/userPageList", {
                     pageNo: pageNo,
                     pageSize: pageSize,
-                    type:2
+                    type: 2
                 }).then(res => {
                     const {records, total} = res.data.data;
                     this.userListData = records;
@@ -165,7 +152,12 @@
                 this.http(currentPage, this.pageSize);
             },
             add() {
-                axios.post("/systemUser/save", this.systemUser).then(res => {
+                axios.post("/user/save", {
+                    name: this.user.name,
+                    phone: this.user.phone,
+                    sex: this.user.sex,
+                    type: 2
+                }).then(res => {
                     const {code, message} = res.data;
                     if (code === 200) {
                         this.message(message, "success");
@@ -177,7 +169,7 @@
                 });
             },
             edit(user) {
-                this.systemUser = user;
+                this.user = user;
                 this.editDialog = true;
             },
             deleteById(id) {
@@ -185,7 +177,7 @@
                 this.isDelete = true;
             },
             confirmDeleteById() {
-                axios.get("/systemUser/removeById/" + this.deleteId).then(res => {
+                axios.get("/user/removeById/" + this.deleteId).then(res => {
                     const {code, message} = res.data;
                     if (code === 200) {
                         this.message(message, "success");
@@ -198,7 +190,7 @@
                 });
             },
             confirmEdit() {
-                axios.post("/systemUser/updateById", this.systemUser).then(res => {
+                axios.post("/user/updateById", this.user).then(res => {
                     const {code, message} = res.data;
                     if (code === 200) {
                         this.message(message, "success");

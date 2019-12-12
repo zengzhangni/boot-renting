@@ -87,13 +87,13 @@ public class MenuController {
         m3.setId(103);
         m3.setPId(1);
         m3.setName("房源列表");
-        m3.setIndexUrl("http://localhost/doc.html");
+        m3.setIndexUrl("http://localhost/admin/houseList");
 
         Menu m4 = new Menu();
         m4.setId(104);
         m4.setPId(1);
         m4.setName("交易列表");
-        m4.setIndexUrl("http://localhost/doc.html");
+        m4.setIndexUrl("http://localhost/admin/orderList");
 
         Menu m21 = new Menu();
         m21.setId(200);

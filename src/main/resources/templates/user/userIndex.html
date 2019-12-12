@@ -1,10 +1,173 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta http-equiv="cache-control" content="no-siteapp">
+
+    <title>首页</title>
+    <link rel='stylesheet' href='http://www.dmaku.com/demo/moban/2018061451985310/css/style.css' type='text/css'/>
+    <link rel='stylesheet' href='/css/user/index.css' type='text/css'/>
+    <script src="/js/vue.min.js"></script>
+    <script src="/js/axios.min.js"></script>
+    <script src="/js/element-ui.js"></script>
+    <link rel="stylesheet" href="/css/element-ui.css">
+    <link rel="stylesheet" href="/css/iconfont.css">
 </head>
-<body>
-用户
+<body class="home blog">
+<div id="userIndex">
+    <header class="header">
+        <div class="container">
+            <div class="sitenav" style="float: right">
+                <ul>
+                    <li id="menu-item-18" class="menu-item"><a href="javascript:;">首页</a></li>
+                    <li id="menu-item-24" class="menu-item"><a href="javascript:;">我的订单</a></li>
+                    <li id="menu-item-25" class="menu-item"><a href="javascript:;">历史记录</a></li>
+                    <li id="menu-item-26" class="menu-item"><a href="javascript:;">我的</a></li>
+                </ul>
+            </div>
+        </div>
+
+    </header>
+    <div id="homeso">
+        <form style="text-align: center;float: none">
+            <input tabindex="2" class="homesoin" type="text" placeholder="输入关键字" value="">
+            <button tabindex="3" class="homesobtn" type="button"><i class="fa">查找</i></button>
+        </form>
+
+
+    </div>
+    <section class="container">
+        <div class="single-strong">房源列表<span class="chak"><a href="javascript:;">查看更多</a></span></div>
+        <div class="b-listtab-main">
+            <div class="s-tab-main">
+                <ul class="list g-clear" :index="String(index)" :key="index" v-for="(item,index) of houseListData">
+                    <li class='item'>
+                        <div class='cover g-playicon' @click="detail(item.id),isInfo=true">
+                            <img :src='item.houseImg'/>
+                        </div>
+                        <div class='detail'>
+                            <p class='title g-clear'>
+                                <span class='s1'> {{item.subject}}</span>
+                            </p>
+                            <p class='title g-clear'>
+                                <span class='s2'> &yen;{{item.price}}</span>
+                            </p>
+                            <p class='star'>{{item.houseAddress}}</p>
+                        </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+        <div class="branding branding-black">
+            <div class="container" style="text-align: center;">
+                <h2>XXXXXXXXXXXXXXXX</h2>
+                <a target="blank" class="gobtn" href="javascript:;">XXXXXXXX</a>
+                <a target="blank" class="gobtn" href="javascript:;">XXXXXXXX</a></div>
+        </div>
+    </footer>
+
+    <el-dialog
+            title="房源详情"
+            :visible.sync="isInfo"
+            width="400"
+            height="500"
+    >
+        <div style="margin-bottom: 20px;font-size: 20px">
+            房东姓名:<span style="color: #ff100a;">{{houseInfo.name}}</span>
+        </div>
+        <div style="margin-bottom: 20px;font-size: 20px">
+            房东手机:<span style="color: #ff100a;">{{houseInfo.phone}}</span>
+        </div>
+        <div style="margin-bottom: 20px;font-size: 20px">
+            房源标题:<span style="color: #ff100a;">{{houseInfo.subject}}</span>
+        </div>
+        <div style="margin-bottom: 20px;font-size: 20px">
+            房源地址:<span style="color: #ff100a;">{{houseInfo.houseAddress}}</span>
+        </div>
+        <div style="margin-bottom: 20px;font-size: 20px">
+            房源金额:<span style="color: #ff100a;">{{houseInfo.price}}</span>
+        </div>
+        <div style="margin-bottom: 20px;font-size: 20px">
+            备注信息:<span style="color: #ff100a;">{{houseInfo.remark}}</span>
+        </div>
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="isInfo = false">取消</el-button>
+    <el-button type="primary" @click="save(houseInfo)">租房</el-button>
+  </span>
+    </el-dialog>
+</div>
+
 </body>
+<script>
+    new Vue({
+        el: '#userIndex',
+        data: {
+            houseListData: [],
+            isInfo: false,
+            userCode: "USER2019121214255662D15",
+            houseInfo: {
+                name: "",
+                phone: "",
+                subject: "",
+                houseAddress: "",
+                price: "",
+                remark: ""
+            }
+        },
+        mounted() {
+            this.http();
+        },
+        methods: {
+            http() {
+                axios.post("/house/houseList").then(res => {
+                    const {code, data} = res.data;
+                    this.houseListData = data;
+                });
+            },
+            detail(id) {
+                axios.get("/house/getInfoById/" + id).then(res => {
+                    const {code, message, data} = res.data;
+                    if (code === 200) {
+                        this.houseInfo = data
+                    } else {
+                        this.message(message, "error");
+                    }
+                });
+            },
+            save(info) {
+                console.log(info)
+                axios.post("/order/save", {
+                    userCode: this.userCode,
+                    houseCode: info.houseCode,
+                    price: info.price
+                }).then(res => {
+                    const {code, message} = res.data;
+                    if (code === 200) {
+                        this.message(message, "success");
+                        this.isInfo = false
+                    } else {
+                        this.message(message, "error");
+                    }
+                });
+            },
+
+            //success warning info error
+            message(message, type) {
+                this.$message({
+                    message: message,
+                    type: type == null ? "info" : type
+
+                });
+            }
+        }
+    })
+</script>
 </html>

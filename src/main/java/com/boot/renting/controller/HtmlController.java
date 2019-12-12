@@ -3,15 +3,10 @@ package com.boot.renting.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class HtmlController {
-
-
-    @GetMapping("/log")
-    public String log() {
-        return "log";
-    }
 
     @GetMapping("/login")
     public String login() {
@@ -23,49 +18,51 @@ public class HtmlController {
         return "register";
     }
 
-    @GetMapping("/landlord/landlordIndex")
-    public String landlordIndex() {
-        return "landlord/landlordIndex";
+    /*--------------------------landlord------------------------------*/
+
+    @GetMapping("/landlord/{html}")
+    public String landlordIndex(@PathVariable("html") String html) {
+        return "landlord/" + html;
     }
 
-    @GetMapping("/user/userIndex")
-    public String userIndex() {
-        return "user/userIndex";
-    }
+    /*--------------------------user------------------------------*/
 
+    @GetMapping("/user/{html}")
+    public String userIndex(@PathVariable("html") String html) {
+        return "user/" + html;
+    }
 
     /*--------------------------admin------------------------------*/
 
-    @GetMapping("/admin/index")
-    public String adminIndex() {
-        return "admin/index";
+    @GetMapping("/admin/{html}")
+    public String adminHtml(@PathVariable("html") String html) {
+        return "admin/" + html;
     }
-
-    @GetMapping("/admin/login")
-    public String adminLogin() {
-        return "admin/login";
-    }
-
-    @GetMapping("/admin/adminList")
-    public String adminList() {
-        return "admin/adminList";
-    }
-
-    @GetMapping("/admin/userList")
-    public String userList() {
-        return "admin/userList";
-    }
-
-    @GetMapping("/admin/landlordList")
-    public String landlordList() {
-        return "admin/landlordList";
-    }
-
-
-    @GetMapping("/cs")
-    public String cs() {
-        return "cs";
-    }
+//
+//    @GetMapping("/admin/index")
+//    public String adminIndex() {
+//        return "admin/index";
+//    }
+//
+//    @GetMapping("/admin/login")
+//    public String adminLogin() {
+//        return "admin/login";
+//    }
+//
+//    @GetMapping("/admin/adminList")
+//    public String adminList() {
+//        return "admin/adminList";
+//    }
+//
+//    @GetMapping("/admin/userList")
+//    public String userList() {
+//        return "admin/userList";
+//    }
+//
+//    @GetMapping("/admin/landlordList")
+//    public String landlordList() {
+//        return "admin/landlordList";
+//    }
 
 
 //

@@ -10,6 +10,7 @@ import com.boot.renting.entity.User;
 import com.boot.renting.query.UserListQuery;
 import com.boot.renting.service.UserService;
 import com.boot.renting.utils.ResponseMessage;
+import com.boot.renting.utils.create.NoUtil;
 import com.boot.renting.utils.exception.BaseException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,10 +46,11 @@ public class UserController {
     @ApiOperation("保存")
     @PostMapping("save")
     public ResponseMessage<Boolean> save(@RequestBody User user) {
-        User user1 = userService.queryByLoginName(user.getLoginName());
+        User user1 = userService.queryByPhone(user.getPhone(), user.getType());
         if (user1 != null) {
             throw new BaseException("账号已存在");
         }
+        user.setUserCode(NoUtil.getUserCode());
         return new ResponseMessage<>(userService.save(user));
     }
 
@@ -57,6 +59,7 @@ public class UserController {
     public ResponseMessage<Boolean> updateById(@RequestBody User user) {
         return new ResponseMessage<>(userService.updateById(user));
     }
+
 
     @ApiOperation("通过id删除")
     @GetMapping("removeById/{id}")
@@ -86,5 +89,13 @@ public class UserController {
     @PostMapping("register")
     public ResponseMessage<String> register(@RequestBody UserRegisterDto dto) {
         return new ResponseMessage<>(userService.register(dto));
+    }
+
+    @ApiOperation("查询所有User")
+    @GetMapping("queryAllUser/{type}")
+    public ResponseMessage<List<User>> queryAllUser(@PathVariable("type") Integer type) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("type", type);
+        return new ResponseMessage<>(userService.list(wrapper));
     }
 }

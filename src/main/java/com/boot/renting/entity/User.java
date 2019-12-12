@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 @Data
 @ApiModel("用户")
-@TableName("user")
+@TableName("t_user")
 public class User implements Serializable {
 
     @ApiModelProperty("id")

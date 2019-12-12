@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>租客列表</title>
+    <title>房源列表</title>
     <script src="/js/vue.min.js"></script>
     <script src="/js/axios.min.js"></script>
     <script src="/js/element-ui.js"></script>
     <link rel="stylesheet" href="/css/element-ui.css">
 </head>
 <body>
-<div id="userList">
+<div id="houseList">
     <div style="margin: 20px; float: right">
-        <el-button type="primary" icon="el-icon-edit" @click="addDialog = true,user={}">新增</el-button>
+        <el-button type="primary" icon="el-icon-edit" @click="addDialog = true,house={}">新增</el-button>
         <el-button type="primary" icon="el-icon-refresh" @click="handleCurrentChange(1)">刷新</el-button>
     </div>
 
-    <el-table :data="userListData"
+    <el-table :data="houseListData"
               highlight-current-row
               border
               max-height="650"
@@ -25,15 +25,17 @@
                 <span>{{(pageNo - 1) * pageSize + scope.$index + 1}}</span>
             </template>
         </el-table-column>
-        <el-table-column prop="userCode" label="编号" align="center" width="230px">
+        <el-table-column prop="houseCode" label="房子编码" align="center" width="230px">
         </el-table-column>
-        <el-table-column prop="name" label="姓名" align="center" show-overflow-tooltip>
+        <el-table-column prop="userCode" label="房东编号" align="center" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column prop="phone" label="手机号" align="center">
+        <el-table-column prop="subject" label="标题" align="center" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column prop="img" label="头像" align="center">
+        <el-table-column prop="houseAddress" label="房子地址" align="center" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column prop="sex" label="性别" align="center" :formatter="sexFormat">
+        <el-table-column prop="price" label="金额" align="center" :formatter="priceFormat">
+        </el-table-column>
+        <el-table-column prop="remark" label="备注" align="center" show-overflow-tooltip>
         </el-table-column>
         <el-table-column align="center" label="操作">
             <template slot-scope="scope">
@@ -68,18 +70,34 @@
 
     <el-dialog title="新增" :visible.sync="addDialog" width="450px">
         <div style="margin-bottom: 20px;">
-            姓名:
-            <el-input v-model="user.name" placeholder="姓名" style="width:300px"></el-input>
+            标题:
+            <el-input v-model="house.subject" placeholder="姓名" style="width:300px"></el-input>
         </div>
         <div style="margin-bottom: 20px">
-            手机号:
-            <el-input v-model="user.phone" placeholder="手机号" style="width:300px" maxlength="11"></el-input>
+            地址:
+            <el-input v-model="house.houseAddress" placeholder="手机号" style="width:300px"></el-input>
         </div>
         <div style="margin-bottom: 20px">
-            性别:
-            <el-select v-model="user.sex" placeholder="性别" style="width:300px">
-                <el-option label="男" value="1"></el-option>
-                <el-option label="女" value="0"></el-option>
+            金额:
+            <el-input v-model="house.price" placeholder="金额" style="width:300px" maxlength="11"></el-input>
+        </div>
+        <div style="margin-bottom: 20px">
+            备注:
+            <el-input v-model="house.remark" placeholder="备注" style="width:300px"></el-input>
+        </div>
+        <div style="margin-bottom: 20px">
+            房东:
+            <el-select
+                    v-model="house.userCode"
+                    @visible-change="visibleChange"
+                    placeholder="房东" style="width:300px"
+            >
+                <el-option
+                        v-for="item in userList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.userCode">
+                </el-option>
             </el-select>
         </div>
         <div slot="footer" class="dialog-footer">
@@ -87,16 +105,38 @@
             <el-button type="primary" @click="add">保存</el-button>
         </div>
     </el-dialog>
+
+
     <el-dialog title="编辑" :visible.sync="editDialog" width="450px">
         <div style="margin-bottom: 20px;">
-            姓名:
-            <el-input v-model="user.name" placeholder="姓名" style="width:300px"></el-input>
+            标题:
+            <el-input v-model="house.subject" placeholder="姓名" style="width:300px"></el-input>
         </div>
         <div style="margin-bottom: 20px">
-            性别:
-            <el-select v-model="user.sex" placeholder="性别" style="width:300px">
-                <el-option label="男" value=1></el-option>
-                <el-option label="女" value=0></el-option>
+            地址:
+            <el-input v-model="house.houseAddress" placeholder="手机号" style="width:300px"></el-input>
+        </div>
+        <div style="margin-bottom: 20px">
+            金额:
+            <el-input v-model="house.price" placeholder="金额" style="width:300px" maxlength="11"></el-input>
+        </div>
+        <div style="margin-bottom: 20px">
+            备注:
+            <el-input v-model="house.remark" placeholder="备注" style="width:300px"></el-input>
+        </div>
+        <div style="margin-bottom: 20px">
+            房东:
+            <el-select
+                    v-model="house.userCode"
+                    @visible-change="visibleChange"
+                    placeholder="房东" style="width:300px"
+            >
+                <el-option
+                        v-for="item in userList"
+                        :key="item.id"
+                        :label="item.name"
+                        :value="item.userCode">
+                </el-option>
             </el-select>
         </div>
         <div slot="footer" class="dialog-footer">
@@ -108,9 +148,9 @@
 </body>
 <script>
     new Vue({
-        el: '#userList',
+        el: '#houseList',
         data: {
-            userListData: [],
+            houseListData: [],
             pageNo: 1,
             pageSize: 10,
             total: 0,
@@ -118,26 +158,28 @@
             isDelete: false,
             addDialog: false,
             editDialog: false,
-            user: {
+            house: {
                 id: null,
-                name: "",
-                phone: "",
-                sex: null,
-                type: null
-            }
+                houseCode: "",
+                subject: "",
+                userCode: "",
+                houseAddress: "",
+                price: null,
+                remark: ""
+            },
+            userList: []
         },
         mounted() {
             this.http(this.pageNo, this.pageSize);
         },
         methods: {
             http(pageNo, pageSize) {
-                axios.post("/user/userPageList", {
+                axios.post("/house/housePageList", {
                     pageNo: pageNo,
                     pageSize: pageSize,
-                    type: 1
                 }).then(res => {
                     const {records, total} = res.data.data;
-                    this.userListData = records;
+                    this.houseListData = records;
                     this.total = total;
                 });
             },
@@ -152,12 +194,7 @@
                 this.http(currentPage, this.pageSize);
             },
             add() {
-                axios.post("/user/save", {
-                    name: this.user.name,
-                    phone: this.user.phone,
-                    sex: this.user.sex,
-                    type: 1
-                }).then(res => {
+                axios.post("/house/save", this.house).then(res => {
                     const {code, message} = res.data;
                     if (code === 200) {
                         this.message(message, "success");
@@ -168,8 +205,8 @@
                     }
                 });
             },
-            edit(user) {
-                this.user = user;
+            edit(house) {
+                this.house = house;
                 this.editDialog = true;
             },
             deleteById(id) {
@@ -177,7 +214,7 @@
                 this.isDelete = true;
             },
             confirmDeleteById() {
-                axios.get("/user/removeById/" + this.deleteId).then(res => {
+                axios.get("/house/removeById/" + this.deleteId).then(res => {
                     const {code, message} = res.data;
                     if (code === 200) {
                         this.message(message, "success");
@@ -190,7 +227,7 @@
                 });
             },
             confirmEdit() {
-                axios.post("/user/updateById", this.user).then(res => {
+                axios.post("/house/updateById", this.house).then(res => {
                     const {code, message} = res.data;
                     if (code === 200) {
                         this.message(message, "success");
@@ -202,16 +239,30 @@
 
                 });
             },
-            sexFormat(row, column, cellValue) {
-                return cellValue === 0 ? "女" : "男";
+            priceFormat(row, column, cellValue) {
+                if (cellValue) {
+                    return cellValue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                }
+                return 0;
             },
             //success warning info error
             message(message, type) {
                 this.$message({
                     message: message,
                     type: type == null ? "info" : type
-
                 });
+            },
+            visibleChange(change) {
+                if (change && this.userList.length === 0) {
+                    axios.get("/user/queryAllUser/2").then(res => {
+                        const {code, message, data} = res.data;
+                        if (code === 200) {
+                            this.userList = data;
+                        } else {
+                            this.message(message, "error");
+                        }
+                    });
+                }
             }
         }
     })

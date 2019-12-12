@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel("足迹")
-@TableName("trace")
+@TableName("t_trace")
 public class Trace implements Serializable {
 
     @ApiModelProperty("id")

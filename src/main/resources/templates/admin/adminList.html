@@ -25,7 +25,7 @@
                 <span>{{(pageNo - 1) * pageSize + scope.$index + 1}}</span>
             </template>
         </el-table-column>
-        <el-table-column prop="userCode" label="编号" align="center" show-overflow-tooltip>
+        <el-table-column prop="userCode" label="编号" align="center" width="230px">
         </el-table-column>
         <el-table-column prop="name" label="姓名" align="center" show-overflow-tooltip>
         </el-table-column>
@@ -128,7 +128,6 @@
             total: 0,
             deleteId: null,
             isDelete: false,
-            loginName: null,
             addDialog: false,
             editDialog: false,
             systemUser: {

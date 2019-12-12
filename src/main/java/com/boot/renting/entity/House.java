@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel("房子")
-@TableName("house")
+@TableName("t_house")
 public class House implements Serializable {
 
     @ApiModelProperty("id")

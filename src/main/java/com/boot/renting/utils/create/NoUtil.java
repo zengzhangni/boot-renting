@@ -22,6 +22,22 @@ public class NoUtil {
     }
 
     /**
+     * 获取房子code
+     */
+    public static String getHouseCode() {
+        String file = "HOUSE" + DateUtil.format(new Date(), DatePattern.PURE_DATETIME_PATTERN);
+        return CreateNo.getInstance().GenerateNo(file, 5);
+    }
+
+    /**
+     * 获取订单code
+     */
+    public static String getOrderCode() {
+        String file = "ORDER" + DateUtil.format(new Date(), DatePattern.PURE_DATETIME_PATTERN);
+        return CreateNo.getInstance().GenerateNo(file, 5);
+    }
+
+    /**
      * 获取随机数
      */
     public static String getRandom(Integer num) {
