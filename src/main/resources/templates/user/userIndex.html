@@ -57,7 +57,7 @@
                                     <span class='s1'> {{item.subject}}</span>
                                 </p>
                                 <p class='title g-clear'>
-                                    <span class='s2'> &yen;{{item.price}}</span>
+                                    <span class='s2'> &yen;{{String(item.price).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}}</span>
                                 </p>
                                 <p class='star'>{{item.houseAddress}}</p>
                             </div>

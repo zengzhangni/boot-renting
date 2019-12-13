@@ -1,10 +1,7 @@
 package com.boot.renting.service.impl;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.boot.renting.dto.SystemUserLoginDto;
 import com.boot.renting.dto.UserLoginDto;
@@ -93,6 +90,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             CookieUtil.set(HttpContextUtils.getHttpServletResponse(), "userPhone", dto.getPhone(), true);
             return "/user/userIndex";
         } else if (dto.getType() == 2) {
+            CookieUtil.set(HttpContextUtils.getHttpServletResponse(), "landlordPhone", dto.getPhone(), true);
             return "/landlord/landlordIndex";
         }
         return "/login";
@@ -110,6 +108,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setUserCode(NoUtil.getUserCode());
         user.setPhone(dto.getPhone());
         user.setType(dto.getType());
+        user.setImg(NoUtil.getUserImg());
         userMapper.insert(user);
         return "/login";
     }

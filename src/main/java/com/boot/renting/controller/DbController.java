@@ -1,5 +1,6 @@
 package com.boot.renting.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.boot.renting.entity.House;
 import com.boot.renting.entity.Order;
 import com.boot.renting.entity.User;
@@ -66,16 +67,17 @@ public class DbController {
     @ApiOperation("添加house数据")
     @GetMapping("addHouse")
     public ResponseMessage addHouse(@ApiParam("添加多少") @RequestParam Integer num) {
-        List<User> users = userService.list();
+        List<User> users = getUsers(2);
         List<House> list = new ArrayList<>();
         for (int i = 0; i < num; i++) {
             House house = new House();
-            house.setUserCode(users.get(new Random().nextInt(10)).getUserCode());
+            house.setUserCode(users.get(new Random().nextInt(users.size())).getUserCode());
             house.setSubject("房源" + NoUtil.getRandom(6));
             house.setHouseCode(NoUtil.getHouseCode());
             house.setHouseAddress("成都市/二环路/" + NoUtil.getRandom(6) + "号");
             house.setPrice(new Random().nextInt(100000000));
             house.setRemark("环境好" + NoUtil.getRandom(6));
+            house.setHouseImg(NoUtil.getHouseImg());
             list.add(house);
         }
         return new ResponseMessage<>(houseService.saveBatch(list));
@@ -84,7 +86,7 @@ public class DbController {
     @ApiOperation("添加order数据")
     @GetMapping("addOrder")
     public ResponseMessage addOrder(@ApiParam("添加多少") @RequestParam Integer num) {
-        List<User> users = userService.list();
+        List<User> users = getUsers(1);
         List<House> houses = houseService.list();
         List<Order> list = new ArrayList<>();
         for (int i = 0; i < num; i++) {
@@ -97,6 +99,12 @@ public class DbController {
             list.add(order);
         }
         return new ResponseMessage<>(orderService.saveBatch(list));
+    }
+
+    private List<User> getUsers(Integer type) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("type", type);
+        return userService.list(wrapper);
     }
 
 }

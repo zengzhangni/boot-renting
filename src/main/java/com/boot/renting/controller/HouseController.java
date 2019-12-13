@@ -2,6 +2,7 @@ package com.boot.renting.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.boot.renting.entity.House;
@@ -42,6 +43,9 @@ public class HouseController {
         if (StringUtils.isNoneBlank(query.getKey())) {
             wrapper.like("subject", query.getKey());
         }
+        if (StringUtils.isNoneBlank(query.getUserCode())) {
+            wrapper.eq("user_code", query.getUserCode());
+        }
         return new ResponseMessage<>(houseService.list(wrapper));
     }
 
@@ -49,6 +53,9 @@ public class HouseController {
     @PostMapping("save")
     public ResponseMessage<Boolean> save(@RequestBody House house) {
         house.setHouseCode(NoUtil.getHouseCode());
+        if (StringUtils.isBlank(house.getHouseImg())) {
+            house.setHouseImg(NoUtil.getHouseImg());
+        }
         return new ResponseMessage<>(houseService.save(house));
     }
 
@@ -62,6 +69,14 @@ public class HouseController {
     @GetMapping("removeById/{id}")
     public ResponseMessage<Boolean> removeById(@PathVariable("id") Integer id) {
         return new ResponseMessage<>(houseService.removeById(id));
+    }
+
+    @ApiOperation("通过HouseCode删除")
+    @GetMapping("deleteByHouseCode/{houseCode}")
+    public ResponseMessage<Boolean> deleteByHouseCode(@PathVariable("houseCode") String houseCode) {
+        UpdateWrapper<House> wrapper = new UpdateWrapper<>();
+        wrapper.eq("house_code", houseCode);
+        return new ResponseMessage<>(houseService.remove(wrapper));
     }
 
     @ApiOperation("通过id获取房子详情")

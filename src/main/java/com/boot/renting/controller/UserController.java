@@ -53,6 +53,7 @@ public class UserController {
             throw new BaseException("账号已存在");
         }
         user.setUserCode(NoUtil.getUserCode());
+        user.setImg(NoUtil.getUserImg());
         return new ResponseMessage<>(userService.save(user));
     }
 
@@ -104,7 +105,13 @@ public class UserController {
     @ApiOperation("获取用户信息")
     @GetMapping("getInfo/{type}")
     public ResponseMessage<User> getInfo(@PathVariable("type") Integer type) {
-        String phone = CookieUtil.getValue(HttpContextUtils.getHttpServletRequest(), "userPhone");
+        String key = "";
+        if (type == 1) {
+            key = "userPhone";
+        } else if (type == 2) {
+            key = "landlordPhone";
+        }
+        String phone = CookieUtil.getValue(HttpContextUtils.getHttpServletRequest(), key);
         return new ResponseMessage<>(userService.queryByPhone(phone, type));
     }
 }

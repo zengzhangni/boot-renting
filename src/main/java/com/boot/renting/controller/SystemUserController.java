@@ -58,7 +58,6 @@ public class SystemUserController {
     @ApiOperation("通过id更新")
     @PostMapping("updateById")
     public ResponseMessage<Boolean> updateById(@RequestBody User user) {
-        yzSystemUser(user.getLoginName());
         return new ResponseMessage<>(userService.updateById(user));
     }
 

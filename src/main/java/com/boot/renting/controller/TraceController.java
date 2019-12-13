@@ -30,7 +30,10 @@ public class TraceController {
     @ApiOperation("保存")
     @PostMapping("save")
     public ResponseMessage<Boolean> save(@RequestBody Trace trace) {
-        return new ResponseMessage<>(traceService.save(trace));
+        if (trace.getUserCode() != null) {
+            return new ResponseMessage<>(traceService.save(trace));
+        }
+        return new ResponseMessage<>();
     }
 
     @ApiOperation("通过id删除")
