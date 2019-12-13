@@ -59,6 +59,7 @@ public class DbController {
             }
             user.setSex(new Random().nextInt(2));
             user.setType(type);
+            user.setImg(NoUtil.getUserImg());
             list.add(user);
         }
         return new ResponseMessage<>(userService.saveBatch(list));
