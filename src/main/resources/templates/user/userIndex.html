@@ -38,7 +38,7 @@
         <div id="homeso">
             <form style="text-align: center;float: none">
                 <input tabindex="2" class="homesoin" type="text" v-model="key" placeholder="输入关键字">
-                <button tabindex="3" class="homesobtn" type="button" @click="http()"><i class="fa">查找</i></button>
+                <button tabindex="3" class="homesobtn" type="button" @click="http(1,20)"><i class="fa">查找</i></button>
             </form>
 
 
@@ -67,6 +67,18 @@
                 </div>
             </div>
         </section>
+
+        <div class="block" style="float: right;padding: 30px">
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :page-sizes="[10, 20, 30, 40]"
+                    :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="total">
+            </el-pagination>
+        </div>
+
         <footer class="footer">
             <div class="branding branding-black">
                 <div class="container" style="text-align: center;">
@@ -107,9 +119,9 @@
                     @size-change="handleSizeChange2"
                     @current-change="handleCurrentChange2"
                     :page-sizes="[10, 20, 30, 40]"
-                    :page-size="pageSize"
+                    :page-size="pageSize2"
                     layout="total, sizes, prev, pager, next, jumper"
-                    :total="total">
+                    :total="total2">
             </el-pagination>
         </div>
 
@@ -195,9 +207,9 @@
                     @size-change="handleSizeChange3"
                     @current-change="handleCurrentChange3"
                     :page-sizes="[10, 20, 30, 40]"
-                    :page-size="pageSize"
+                    :page-size="pageSize3"
                     layout="total, sizes, prev, pager, next, jumper"
-                    :total="total">
+                    :total="total3">
             </el-pagination>
         </div>
     </div>
@@ -268,11 +280,17 @@
             orderListData: [],
             traceListData: [],
             pageNo: 1,
-            pageSize: 10,
+            pageSize: 20,
+            pageNo2: 1,
+            pageSize2: 10,
+            pageNo3: 1,
+            pageSize3: 10,
             isDelete: false,
             orderDeleteId: null,
             isInfo2: false,
             total: 0,
+            total2: 0,
+            total3: 0,
             orderInfo: {
                 orderCode: "",
                 userName: "",
@@ -285,38 +303,41 @@
             }
         },
         mounted() {
-            this.http();
+            this.http(1, 20);
             this.getUserInfo();
         },
         methods: {
-            http() {
+            http(pageNo, pageSize) {
                 axios.post("/house/houseList", {
+                    pageNo: pageNo,
+                    pageSize: pageSize,
                     key: this.key
                 }).then(res => {
-                    const {code, data} = res.data;
-                    this.houseListData = data;
+                    const {records, total} = res.data.data;
+                    this.houseListData = records;
+                    this.total = total;
                 });
             },
             http2(pageNo, pageSize) {
                 axios.post("/order/orderPageList", {
-                    pageNo: pageNo,
-                    pageSize: pageSize,
+                    pageNo2: pageNo,
+                    pageSize2: pageSize,
                     userCode: this.userCode
                 }).then(res => {
                     const {records, total} = res.data.data;
                     this.orderListData = records;
-                    this.total = total;
+                    this.total2 = total;
                 });
             },
             http3(pageNo, pageSize) {
                 axios.post("/trace/tracePageList", {
-                    pageNo: pageNo,
-                    pageSize: pageSize,
+                    pageNo3: pageNo,
+                    pageSize3: pageSize,
                     userCode: this.userCode
                 }).then(res => {
                     const {records, total} = res.data.data;
                     this.traceListData = records;
-                    this.total = total;
+                    this.total3 = total;
                 });
             },
             getUserInfo() {
@@ -364,12 +385,12 @@
                 this.http(this.pageNo, size);
             },
             handleSizeChange2(size) {
-                this.pageSize = size;
-                this.http2(this.pageNo, size);
+                this.pageSize2 = size;
+                this.http2(this.pageNo2, size);
             },
             handleSizeChange3(size) {
-                this.pageSize = size;
-                this.http3(this.pageNo, size);
+                this.pageSize3 = size;
+                this.http3(this.pageNo3, size);
             },
             //页码改变
             handleCurrentChange(currentPage) {
@@ -378,13 +399,13 @@
             },
             //页码改变
             handleCurrentChange2(currentPage) {
-                this.pageNo = currentPage;
-                this.http2(currentPage, this.pageSize);
+                this.pageNo2 = currentPage;
+                this.http2(currentPage, this.pageSize2);
             },
             //页码改变
             handleCurrentChange3(currentPage) {
-                this.pageNo = currentPage;
-                this.http3(currentPage, this.pageSize);
+                this.pageNo3 = currentPage;
+                this.http3(currentPage, this.pageSize3);
             },
             //success warning info error
             message(message, type) {

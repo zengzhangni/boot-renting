@@ -24,7 +24,7 @@
         <div class="container">
             <div class="sitenav" style="float: right">
                 <ul>
-                    <li class="menu-item"><a href="javascript:;" @click="num=1,http()">我的房源</a></li>
+                    <li class="menu-item"><a href="javascript:;" @click="num=1,http(1,20)">我的房源</a></li>
                     <li class="menu-item"><a href="javascript:;" @click="num=2">发布房源</a></li>
                     <li class="menu-item"><a href="javascript:;" @click="num=4">我的</a></li>
                     <li class="menu-item"><a href="/login">退出登录</a></li>
@@ -37,7 +37,7 @@
         <div id="homeso">
             <form style="text-align: center;float: none">
                 <input tabindex="2" class="homesoin" type="text" v-model="key" placeholder="输入关键字">
-                <button tabindex="3" class="homesobtn" type="button" @click="http()"><i class="fa">查找</i></button>
+                <button tabindex="3" class="homesobtn" type="button" @click="http(1,20)"><i class="fa">查找</i></button>
             </form>
 
 
@@ -66,6 +66,17 @@
                 </div>
             </div>
         </section>
+
+        <div class="block" style="float: right;padding: 30px">
+            <el-pagination
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :page-sizes="[10, 20, 30, 40]"
+                    :page-size="pageSize"
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="total">
+            </el-pagination>
+        </div>
         <footer class="footer">
             <div class="branding branding-black">
                 <div class="container" style="text-align: center;">
@@ -151,11 +162,15 @@
 
 </body>
 <script>
+
     new Vue({
         el: '#landlordIndex',
         data: {
             key: null,
             num: 1,
+            pageNo: 1,
+            pageSize: 20,
+            total: 0,
             houseListData: [],
             isInfo: false,
             userCode: "",
@@ -182,13 +197,16 @@
             this.getUserInfo();
         },
         methods: {
-            http() {
+            http(pageNo, pageSize) {
                 axios.post("/house/houseList", {
+                    pageNo: pageNo,
+                    pageSize: pageSize,
                     key: this.key,
                     userCode: this.userCode
                 }).then(res => {
-                    const {code, data} = res.data;
-                    this.houseListData = data;
+                    const {records, total} = res.data.data;
+                    this.houseListData = records;
+                    this.total = total;
                 });
             },
             getUserInfo() {
@@ -196,7 +214,7 @@
                     const {code, data} = res.data;
                     this.userCode = data.userCode;
                     this.user = data;
-                    this.http();
+                    this.http(1, 20);
                 });
             },
             detail(id) {
@@ -257,7 +275,17 @@
                         this.message(message, "error");
                     }
                 });
-            }
+            },
+            //分页条
+            handleSizeChange(size) {
+                this.pageSize = size;
+                this.http(this.pageNo, size);
+            },
+            //页码改变
+            handleCurrentChange(currentPage) {
+                this.pageNo = currentPage;
+                this.http(currentPage, this.pageSize);
+            },
         }
     })
 </script>

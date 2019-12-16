@@ -36,7 +36,8 @@ public class HouseController {
 
     @ApiOperation("列表")
     @PostMapping("houseList")
-    public ResponseMessage<List<House>> houseList(@RequestBody UserListQuery query) {
+    public ResponseMessage<IPage<House>> houseList(@RequestBody UserListQuery query) {
+        Page<House> page = new Page<>(query.getPageNo(), query.getPageSize());
         QueryWrapper<House> wrapper = new QueryWrapper<>();
         wrapper.orderByDesc("id");
 
@@ -46,7 +47,7 @@ public class HouseController {
         if (StringUtils.isNoneBlank(query.getUserCode())) {
             wrapper.eq("user_code", query.getUserCode());
         }
-        return new ResponseMessage<>(houseService.list(wrapper));
+        return new ResponseMessage<>(houseService.page(page, wrapper));
     }
 
     @ApiOperation("保存")
